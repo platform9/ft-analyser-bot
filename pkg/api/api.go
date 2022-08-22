@@ -68,5 +68,25 @@ func npsAnalysis(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userid := vars["userid"]
 	zap.S().Debugf("UserID: %s", userid)
-	amplitudeapi.NpsScoreAnalysis(userid)
+	npsAnalysis, err := amplitudeapi.NpsScoreAnalysis(userid)
+	if err != nil {
+		zap.S().Errorf("error while fetching nps analysis for user, error: %v", userid, err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	// Use this to prety print json
+	jsonResp, err := json.MarshalIndent(npsAnalysis, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		zap.S().Errorf("Error while marshalling the response: %v", err)
+		return
+	}
+
+	//TODO: If we format message in Analysis bot then send weeklyAnalysis struct as resp.
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(jsonResp); err != nil {
+		zap.S().Errorf("Error while responding over http. Error: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }

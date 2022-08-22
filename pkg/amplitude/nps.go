@@ -73,20 +73,23 @@ type DUDetails struct {
 /* NpsScoreAnalysis generates a detailed report with
    user info, events and error analysis like UI errors, pf9cli error.
 */
-func NpsScoreAnalysis(userID string) {
+func NpsScoreAnalysis(userID string) (NPSAnalysis, error) {
 	// Fetch the amplitude ID
 	id, err := getAmplitudeID(userID)
 	if err != nil {
 		zap.S().Errorf("failed to get amplitude id, error: %v", err.Error())
+		return NPSAnalysis{}, err
 	}
 
 	//TODO: To be removed, i.e we don't print it just generate the info.
-	_, err = printUserData(id)
+	npsAnalysis, err := printUserData(id)
 	if err != nil {
 		zap.S().Errorf("failed to print user data, error: %v", err.Error())
+		return NPSAnalysis{}, err
 	}
 	fmt.Println("Below are some of the UI errors from bugsnag")
 	bugsangapi.GetAllErrors(userID)
+	return npsAnalysis, nil
 }
 
 // To get amplitude ID
@@ -110,27 +113,29 @@ func getAmplitudeID(userID string) (int64, error) {
 }
 
 // To print the user full activity data.
-func printUserData(AmplitudeUserID int64) (string, error) {
+func printUserData(AmplitudeUserID int64) (NPSAnalysis, error) {
 	client := &http.Client{}
 	userActivityUrl := fmt.Sprintf("https://amplitude.com/api/2/useractivity?user=%d", AmplitudeUserID)
 	api := api{client, userActivityUrl}
 
 	userActivityInfo, err := api.getInfoAPI()
 	if err != nil {
-		return "", fmt.Errorf("unable to get user search info from API, error:", err.Error())
+		return NPSAnalysis{}, fmt.Errorf("unable to get user search info from API, error:", err.Error())
 	}
 
 	userData := amplitudeData{}
 
 	err = json.Unmarshal(userActivityInfo, &userData)
 	if err != nil {
-		return "", fmt.Errorf("unable to unmarshal user search info, error: %v", err.Error())
+		return NPSAnalysis{}, fmt.Errorf("unable to unmarshal user search info, error: %v", err.Error())
 	}
 
 	//TODO: To be removed these print statements
-	fmt.Println("User is from ", userData.UserData.Country)
-	fmt.Println("First seen on ", userData.UserData.FirstUsed)
-	fmt.Println("Last seen on ", userData.UserData.LastUsed)
+	var npsAnalysis NPSAnalysis
+	npsAnalysis.UserCountry = userData.UserData.Country
+	npsAnalysis.FirstSeen = userData.UserData.FirstUsed
+	npsAnalysis.LastSeen = userData.UserData.LastUsed
+	npsAnalysis.UserActivities = removeDuplicates(userData.Events)
 
 	//TODO: To remove this print statement.
 	/*fmt.Printf("Some of the user activites are (")
@@ -140,15 +145,16 @@ func printUserData(AmplitudeUserID int64) (string, error) {
 
 	fmt.Printf("etc)\n")*/
 	// TODO: To be shrink down to fewer events.
-	fmt.Printf("Some of the user activites are %v", removeDuplicates(userData.Events))
+	//fmt.Printf("Some of the user activites are %v", removeDuplicates(userData.Events))
 
 	//Fetch the DU host details for given fqdn
-	err = hostDetails(userData.UserData.Properties.DuFqdn)
+	//TODO: Getting entier bork response instead of for singe fqdn to be looked into.
+	/*err = hostDetails(userData.UserData.Properties.DuFqdn)
 	if err != nil {
 		return "", fmt.Errorf("error getting host details, error: %v", err.Error())
-	}
+	}*/
 
-	return userData.UserData.Properties.DuFqdn, nil
+	return npsAnalysis, nil
 }
 
 // To fetch the host details using bork apis.
