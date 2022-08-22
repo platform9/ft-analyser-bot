@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	bugsangapi "github.com/platform9/ft-analyser-bot/bugsnag"
 )
 
 var (
@@ -18,6 +20,8 @@ var (
 		"Cluster creation all":     "f68bru1",
 		"Cluster creation new":     "vyc4vcr",
 	}
+	userName string = "9fb6f66cf2bd521d1764e8e2981e8eda"
+	password string = "84400cdfaa594ee0338b03d8be011330"
 )
 
 type User struct {
@@ -49,7 +53,7 @@ func WeeklyMessage() {
 			fmt.Errorf("Error occured while creating req", err.Error())
 		}
 		req.Header.Add("Accept", "application/json")
-		req.SetBasicAuth("userID", "Password")
+		req.SetBasicAuth(userName, password)
 		resp, err := client.Do(req)
 		if err != nil {
 			fmt.Errorf("Error :", err.Error())
@@ -144,6 +148,8 @@ func NPS_Score_Analysis(userID string) {
 	if err != nil {
 		fmt.Println("error getting user data :", err)
 	}
+	fmt.Println("Below are some of the UI errors from bugsnag")
+	bugsangapi.GetAllErrors(userID)
 
 }
 
@@ -155,7 +161,7 @@ func getAmplitudeID(userID string) (int64, error) {
 		return 0, fmt.Errorf("Error occured while creating req", err.Error())
 	}
 	req.Header.Add("Accept", "application/json")
-	req.SetBasicAuth("userID", "Password")
+	req.SetBasicAuth(userName, password)
 	resp, err := client.Do(req)
 	if err != nil {
 		return 0, fmt.Errorf("Error :", err.Error())
@@ -183,7 +189,7 @@ func printUserData(AmplitudeUserID int64) (string, error) {
 		return "", fmt.Errorf("Error occured while creating req", err.Error())
 	}
 	req.Header.Add("Accept", "application/json")
-	req.SetBasicAuth("userID", "Password")
+	req.SetBasicAuth(userName, password)
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("Error :", err.Error())

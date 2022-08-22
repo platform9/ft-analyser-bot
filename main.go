@@ -3,13 +3,12 @@ package main
 import (
 	"fmt"
 
-	bugsangapi "github.com/platform9/ft-analyser-bot/bugsnag"
+	amplitudeapi "github.com/platform9/ft-analyser-bot/amplitudeAPI"
 )
 
 func main() {
 	fmt.Println("Analysis")
-
+	userID := "1529858a0f324051a71878724eac1f82"
 	//amplitudeapi.WeeklyMessage()
-	//amplitudeapi.NPS_Score_Analysis("userID")
-	bugsangapi.GetAllErrors("userID")
+	amplitudeapi.NPS_Score_Analysis(userID)
 }
