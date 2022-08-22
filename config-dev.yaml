@@ -1,0 +1,8 @@
+amplitude:
+  apikey: "AMPLITUDE APIKEY" #Amplitude API key
+  secretkey: "AMPLITUDE SECRETKEY" #Amplitude secret key
+bork:
+  token: "BORK PROD TOKEN" # Bork Prod token
+bugsnag:
+  projectID: "PROJECT ID" # Project ID
+  authToken: "AUTH TOKEN" # Bugsnag auth token
