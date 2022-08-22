@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/platform9/ft-analyser-bot/pkg/api"
+	"github.com/platform9/ft-analyser-bot/pkg/ftBot"
 
 	"github.com/platform9/ft-analyser-bot/pkg/log"
 	"github.com/spf13/cobra"
@@ -24,6 +25,7 @@ func run(*cobra.Command, []string) {
 	zap.S().Info("Starting FT analyser bot service...")
 	zap.S().Infof("Version of FT analyser bot service: %s", version)
 	router := api.New()
+	ftBot.FtBotRun()
 	srv := &http.Server{
 		Handler: router,
 		Addr:    ":2112",
@@ -55,7 +57,7 @@ func main() {
 
 // Config file to read secrets like Amplitude, Hubspot, Bugsnag credentials.
 var (
-	homeDir, err = os.UserHomeDir()
+	homeDir, _ = os.UserHomeDir()
 	// Change it accordingly
 	analyserDir = filepath.Join(homeDir, "/envs")
 	cfgFile     = filepath.Join(analyserDir, "config.yaml")
