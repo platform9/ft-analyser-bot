@@ -31,6 +31,8 @@ func weeklyFTAnalysis(w http.ResponseWriter, r *http.Request) {
 	jsonResp, err := json.MarshalIndent(weeklyAnalysis, "", "  ")
 	if err != nil {
 		fmt.Println(err)
+		zap.S().Errorf("Error while marshalling the response: %v", err)
+		return
 	}
 
 	//TODO: If we format message in Analysis bot then send weeklyAnalysis struct as resp.
@@ -67,6 +69,4 @@ func npsAnalysis(w http.ResponseWriter, r *http.Request) {
 	userid := vars["userid"]
 	zap.S().Debugf("UserID: %s", userid)
 	amplitudeapi.NpsScoreAnalysis(userid)
-	//TODO: Should merge both nps analysis and bugsnag analysis
-	//bugsangapi.GetAllErrors()
 }

@@ -19,9 +19,6 @@ func (api *api) getBugsnagInfoAPI() ([]byte, error) {
 		return nil, fmt.Errorf("Http request failed with error: %v", err)
 	}
 
-	//req.Header.Set("auth_token", token)
-	//req.Header.Set("Content-Type", "application/json")
-
 	resp, err := api.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("Failed with error: %v", err)

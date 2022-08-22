@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	//Logs location: /var/log/pf9-ft/ft-analyser.log
+	//Logs location: /var/log/pf9-ft/ft-analyser-bot.log
 	logDir = filepath.Join("/", "var", "log")
 	//pf9Dir is the base pf9Dir to store logs.
 	pf9Dir = filepath.Join(logDir, "pf9-ft")

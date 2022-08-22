@@ -36,8 +36,8 @@ func GetAllErrors(userID string) error {
 
 	bugsnagCreds := config.BugsnagCreds()
 
-	//endpoint := fmt.Sprintf("https://api.bugsnag.com/projects/610afe83dd7ab4001516e0d7/errors/?filters[event.since][][value]=7d")
-	//endpoint := fmt.Sprintf("https://api.bugsnag.com/projects/610afe83dd7ab4001516e0d7/errors/?auth_token=e50ea232-5003-41b9-8315-d76ce9dfa881")
+	//endpoint := fmt.Sprintf("https://api.bugsnag.com/projects/PROJECTID/errors/?filters[event.since][][value]=7d")
+	//endpoint := fmt.Sprintf("https://api.bugsnag.com/projects/PROJECTID/errors/?auth_token=AUTHTOKEN")
 	endpoint := fmt.Sprintf("https://api.bugsnag.com/projects/%s/errors/?auth_token=%s", bugsnagCreds.ProjectID, bugsnagCreds.AuthToken)
 
 	api := api{client, endpoint}
@@ -74,6 +74,7 @@ func GetAllErrors(userID string) error {
 				return err
 			}
 
+			//TODO: This logic to be verified.
 			if userID == details.User.ID {
 				fmt.Println("Email:", details.User.Email)
 				fmt.Println("ID:", details.User.ID)
@@ -109,7 +110,7 @@ func GetDetailsOfEvent(url string) (DetailsOFEvent, error) {
 
 	api := api{client, url}
 
-	//endpoint := fmt.Sprintf("https://api.bugsnag.com/projects/610afe83dd7ab4001516e0d7/errors/%s/?filters[event.since][][value]=7d", errorID)
+	//endpoint := fmt.Sprintf("https://api.bugsnag.com/projects/PROJECTID/errors/%s/?filters[event.since][][value]=7d", errorID)
 	getDetailsInfo, err := api.getBugsnagInfoAPI()
 	if err != nil {
 		return DetailsOFEvent{}, fmt.Errorf("unable to get details of events info from API %v, error: %v", url, err.Error())
