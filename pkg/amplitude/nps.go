@@ -126,15 +126,20 @@ func printUserData(AmplitudeUserID int64) (NPSAnalysis, error) {
 
 	userActivityInfo, err := api.getInfoAPI()
 	if err != nil {
-		return NPSAnalysis{}, fmt.Errorf("unable to get user search info from API, error:", err.Error())
+		return NPSAnalysis{}, fmt.Errorf("unable to get user activity info from API, error:", err.Error())
 	}
 
 	userData := amplitudeData{}
 
 	err = json.Unmarshal(userActivityInfo, &userData)
 	if err != nil {
-		return NPSAnalysis{}, fmt.Errorf("unable to unmarshal user search info, error: %v", err.Error())
+		return NPSAnalysis{}, fmt.Errorf("unable to unmarshal user activity info, error: %v", err.Error())
 	}
+	/*jsonResp, err := json.MarshalIndent(userData, "", "  ")
+	if err != nil {
+		zap.S().Errorf("Error while marshalling the response: %v", err)
+	}
+	fmt.Println("%s", string(jsonResp))*/
 
 	//TODO: To be removed these print statements
 	var npsAnalysis NPSAnalysis
@@ -143,52 +148,39 @@ func printUserData(AmplitudeUserID int64) (NPSAnalysis, error) {
 	npsAnalysis.LastSeen = userData.UserData.LastUsed
 	npsAnalysis.UserActivities = removeDuplicates(userData.Events)[:9]
 
-	//TODO: To remove this print statement.
-	/*fmt.Printf("Some of the user activites are (")
-	for i := 0; i <= 9; i++ {
-		fmt.Printf("%s", userData.Events[i].EventType+", ")
-	}
-
-	fmt.Printf("etc)\n")*/
-	// TODO: To be shrink down to fewer events.
-	//fmt.Printf("Some of the user activites are %v", removeDuplicates(userData.Events))
-
+	fmt.Println(userData.UserData.Properties)
 	//Fetch the DU host details for given fqdn
 	//TODO: Getting entier bork response instead of for singe fqdn to be looked into.
-	/*err = hostDetails(userData.UserData.Properties.DuFqdn)
+	hostDetails, err := hostDetails(userData.UserData.Properties.DuFqdn)
 	if err != nil {
-		return "", fmt.Errorf("error getting host details, error: %v", err.Error())
-	}*/
-
+		return NPSAnalysis{}, fmt.Errorf("error getting host details, error: %v", err.Error())
+	}
+	npsAnalysis.HostDetails = hostDetails
 	return npsAnalysis, nil
 }
 
 // To fetch the host details using bork apis.
-func hostDetails(fqdn string) error {
+func hostDetails(fqdn string) (DUDetails, error) {
 	client := &http.Client{}
 	borkRegionUrl := fmt.Sprintf("https://bork-prod.platform9.horse/api/v1/regions/%s", fqdn)
-
+	//zap.S().Debugf("Bork URL is: %s", borkRegionUrl)
 	api := api{client, borkRegionUrl}
 
 	regionInfo, err := api.getInfoAPI()
 	if err != nil {
-		return fmt.Errorf("unable to get user search info from API, error: %v", err.Error())
+		return DUDetails{}, fmt.Errorf("unable to get DU info from API, error: %v", err.Error())
 	}
 	duData := duDetails{}
-	zap.S().Debugf("\nduData: %s\n", string(regionInfo))
+	//zap.S().Debugf("\nduData: %s\n", string(regionInfo))
 	err = json.Unmarshal(regionInfo, &duData)
 	if err != nil {
-		return fmt.Errorf("unable to unmarshal user search info, error: %v", err.Error())
+		return DUDetails{}, fmt.Errorf("unable to unmarshal bork info, error: %v", err.Error())
 	}
 
-	//TODO: To be removed, these print statements.
-	fmt.Println()
-	fmt.Println("FQDN: ", duData.Details.Fqdn)
-	fmt.Println("Hosted on bork cluster ", duData.Details.Cluster)
-	fmt.Println("Total hosts attached to DU are ", duData.Details.Metadata.TotalHosts)
-	fmt.Println("Active hosts are ", duData.Details.Metadata.ActiveHosts)
-
-	return nil
+	return DUDetails{FQDN: duData.Details.Fqdn,
+		BorkCluster: duData.Details.Cluster,
+		HostCount:   duData.Details.Metadata.TotalHosts,
+		ActiveHosts: duData.Details.Metadata.ActiveHosts}, nil
 }
 
 func contains(s []string, e string) bool {
