@@ -57,7 +57,7 @@ func main() {
 var (
 	homeDir, err = os.UserHomeDir()
 	// Change it accordingly
-	analyserDir = filepath.Join(homeDir, "go/analyser")
+	analyserDir = filepath.Join(homeDir, "/envs")
 	cfgFile     = filepath.Join(analyserDir, "config.yaml")
 )
 
