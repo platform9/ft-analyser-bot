@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	bugsangapi "github.com/platform9/ft-analyser-bot/pkg/bugsnag"
+	"github.com/platform9/ft-analyser-bot/pkg/bugsnag"
 	"go.uber.org/zap"
 )
 
@@ -56,6 +56,7 @@ type NPSAnalysis struct {
 	UserActivities []string
 	CLIEvents      CLI
 	HostDetails    DUDetails
+	UIErrors       []bugsnag.UIErrors
 }
 type CLI struct {
 	Prepnode        int
@@ -87,8 +88,13 @@ func NpsScoreAnalysis(userID string) (NPSAnalysis, error) {
 		zap.S().Errorf("failed to print user data, error: %v", err.Error())
 		return NPSAnalysis{}, err
 	}
-	fmt.Println("Below are some of the UI errors from bugsnag")
-	bugsangapi.GetAllErrors(userID)
+
+	npsAnalysis.UIErrors, err = bugsnag.GetAllErrors(userID)
+	if err != nil {
+		zap.S().Errorf("failed to fetch UI Errors, error: %v", err.Error())
+		//return NPSAnalysis{}, err
+	}
+
 	return npsAnalysis, nil
 }
 
@@ -135,7 +141,7 @@ func printUserData(AmplitudeUserID int64) (NPSAnalysis, error) {
 	npsAnalysis.UserCountry = userData.UserData.Country
 	npsAnalysis.FirstSeen = userData.UserData.FirstUsed
 	npsAnalysis.LastSeen = userData.UserData.LastUsed
-	npsAnalysis.UserActivities = removeDuplicates(userData.Events)
+	npsAnalysis.UserActivities = removeDuplicates(userData.Events)[:9]
 
 	//TODO: To remove this print statement.
 	/*fmt.Printf("Some of the user activites are (")
