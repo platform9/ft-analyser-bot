@@ -101,16 +101,12 @@ func GetAllErrors(userID string) {
 			if err != nil {
 				fmt.Println("failed to get event details of err:", err)
 			}
-			//fmt.Println("Events from : ", url)
-			fmt.Println("-----------------------------------------------------------------------------")
-			//found := strings.Compare(details.User.ID, "452f36c0612a4e9894c09984cb142d13")
-			//if found == 0 {
-			fmt.Println("Email:", details.User.Email)
-			fmt.Println("ID:", details.User.ID)
-			fmt.Println("Erros:", details.Context)
-			//}
 
-			//fmt.Println("-----------------------------------------------------------------------------")
+			if userID == details.User.ID {
+				fmt.Println("Email:", details.User.Email)
+				fmt.Println("ID:", details.User.ID)
+				fmt.Println("Erros:", details.Context)
+			}
 		}
 	}
 

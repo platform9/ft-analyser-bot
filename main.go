@@ -10,6 +10,6 @@ func main() {
 	fmt.Println("Analysis")
 
 	//amplitudeapi.WeeklyMessage()
-	//amplitudeapi.NPS_Score_Analysis("5338d68826cf4082908a2aea5758ee3d")
-	bugsangapi.GetAllErrors("id")
+	//amplitudeapi.NPS_Score_Analysis("userID")
+	bugsangapi.GetAllErrors("userID")
 }
