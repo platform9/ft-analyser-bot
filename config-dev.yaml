@@ -6,3 +6,7 @@ bork:
 bugsnag:
   projectID: "PROJECT ID" # Project ID
   authToken: "AUTH TOKEN" # Bugsnag auth token
+slackbot:
+  authToken: "SLACK_AUTH_TOKEN"
+  appToken: "SLACK_APP_TOKEN"
+  channelId: "SLACK_CHANNEL_ID"
