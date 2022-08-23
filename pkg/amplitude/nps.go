@@ -40,8 +40,7 @@ type amplitudeData struct {
 		FirstSeen  int64 `json:"firstSeen"`
 		LastSeen   int64 `json:"lastSeen"`
 		Properties struct {
-			DuFqdn   string `json:"du_fqdn"`
-			ErrorMsg string `json:"errorMsg"`
+			DuFqdn string `json:"du_fqdn"`
 		} `json:"properties"`
 		Version   string `json:"version"`
 		Country   string `json:"country"`
