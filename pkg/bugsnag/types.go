@@ -3,15 +3,15 @@ package bugsnag
 import "time"
 
 type AllErrors []struct {
-	URL string `json:"url"`
+	URL string `json:"url,omitempty"`
 }
 
 type ErrorDetails struct {
-	EventsURL string `json:"events_url"`
+	EventsURL string `json:"events_url,omitempty"`
 }
 
 type AllEventsOfError []struct {
-	URL string `json:"url"`
+	URL string `json:"url,omitempty"`
 }
 
 type UIErrors struct {
@@ -21,13 +21,13 @@ type UIErrors struct {
 }
 
 type EventDetails struct {
-	ID           string    `json:"id"`
-	URL          string    `json:"url"`
+	//ID string `json:"id,omitempty"`
+	/*URL          string    `json:"url"`
 	ProjectURL   string    `json:"project_url"`
 	IsFullReport bool      `json:"is_full_report"`
-	ErrorID      string    `json:"error_id"`
-	ReceivedAt   time.Time `json:"received_at"`
-	Exceptions   []struct {
+	ErrorID      string    `json:"error_id"`*/
+	ReceivedAt time.Time `json:"received_at,omitempty"`
+	/*Exceptions   []struct {
 		ErrorClass string `json:"error_class"`
 		Message    string `json:"message"`
 		Type       string `json:"type"`
@@ -116,13 +116,13 @@ type EventDetails struct {
 		Orientation    string    `json:"orientation"`
 		Locale         string    `json:"locale"`
 		Time           time.Time `json:"time"`
-	} `json:"device"`
+	} `json:"device"`*/
 	User struct {
-		ID    string `json:"id"`
-		Name  string `json:"name"`
-		Email string `json:"email"`
+		ID string `json:"id,omitempty"`
+		//Name  string `json:"name,omitempty"`
+		//Email string `json:"email,omitempty"`
 	} `json:"user"`
-	Breadcrumbs []struct {
+	/*Breadcrumbs []struct {
 		Timestamp time.Time `json:"timestamp"`
 		Name      string    `json:"name"`
 		Type      string    `json:"type"`
@@ -130,9 +130,9 @@ type EventDetails struct {
 			Status  int    `json:"status"`
 			Request string `json:"request"`
 		} `json:"metaData"`
-	} `json:"breadcrumbs"`
-	Context      string        `json:"context"`
-	Severity     string        `json:"severity"`
+	} `json:"breadcrumbs"`*/
+	Context string `json:"context,omitempty"`
+	/*Severity     string        `json:"severity"`
 	Unhandled    bool          `json:"unhandled"`
-	FeatureFlags []interface{} `json:"feature_flags"`
+	FeatureFlags []interface{} `json:"feature_flags"`*/
 }
