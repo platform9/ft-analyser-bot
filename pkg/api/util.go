@@ -16,7 +16,7 @@ func GenerateOutputString(weeklyAnalysis amplitudeapi.WeeklyAnalysis) string {
 	s += fmt.Sprintln("		- Existing users:", weeklyAnalysis.PrepNode_Details.PrepNode_Attempts.Existing_Users)
 	s += fmt.Sprintln("	- Prep-node successes")
 	s += fmt.Sprintln("		- New users:", weeklyAnalysis.PrepNode_Details.PrepNode_Success.New_Users)
-	s += fmt.Sprintln("		- Existing users:", weeklyAnalysis.PrepNode_Details.PrepNode_Success.New_Users)
+	s += fmt.Sprintln("		- Existing users:", weeklyAnalysis.PrepNode_Details.PrepNode_Success.Existing_Users)
 	s += fmt.Sprintln("	- Prep-node errors")
 	s += fmt.Sprintln("		- New users:", weeklyAnalysis.PrepNode_Details.PrepNode_Errors.New_Users)
 	s += fmt.Sprintln("		- Existing users:", weeklyAnalysis.PrepNode_Details.PrepNode_Errors.Existing_Users)
