@@ -40,7 +40,8 @@ type amplitudeData struct {
 		FirstSeen  int64 `json:"firstSeen"`
 		LastSeen   int64 `json:"lastSeen"`
 		Properties struct {
-			DuFqdn string `json:"du_fqdn"`
+			DuFqdn   string `json:"du_fqdn"`
+			ErrorMsg string `json:"errorMsg"`
 		} `json:"properties"`
 		Version   string `json:"version"`
 		Country   string `json:"country"`
@@ -58,12 +59,19 @@ type NPSAnalysis struct {
 	HostDetails    DUDetails
 	UIErrors       []bugsnag.UIErrors
 }
+
 type CLI struct {
-	Prepnode        int
-	PrepnodeErrors  []string
-	Checknode       int
-	ChecknodeErrors []string
+	Prepnode struct {
+		Success int
+		Failure int
+	}
+	ChecknodeSuccess int
+	ClusterCreation  struct {
+		Success int
+		Delete  int
+	}
 }
+
 type DUDetails struct {
 	FQDN        string
 	BorkCluster string
@@ -135,28 +143,43 @@ func printUserData(AmplitudeUserID int64) (NPSAnalysis, error) {
 	if err != nil {
 		return NPSAnalysis{}, fmt.Errorf("unable to unmarshal user activity info, error: %v", err.Error())
 	}
-	/*jsonResp, err := json.MarshalIndent(userData, "", "  ")
-	if err != nil {
-		zap.S().Errorf("Error while marshalling the response: %v", err)
-	}
-	fmt.Println("%s", string(jsonResp))*/
 
-	//TODO: To be removed these print statements
 	var npsAnalysis NPSAnalysis
 	npsAnalysis.UserCountry = userData.UserData.Country
 	npsAnalysis.FirstSeen = userData.UserData.FirstUsed
 	npsAnalysis.LastSeen = userData.UserData.LastUsed
+	cliDetails := cliDetailsInfo(userData.Events)
+	npsAnalysis.CLIEvents = cliDetails
+
 	npsAnalysis.UserActivities = removeDuplicates(userData.Events)[:9]
 
-	fmt.Println(userData.UserData.Properties)
 	//Fetch the DU host details for given fqdn
-	//TODO: Getting entier bork response instead of for singe fqdn to be looked into.
 	hostDetails, err := hostDetails(userData.UserData.Properties.DuFqdn)
 	if err != nil {
 		return NPSAnalysis{}, fmt.Errorf("error getting host details, error: %v", err.Error())
 	}
 	npsAnalysis.HostDetails = hostDetails
 	return npsAnalysis, nil
+}
+
+// To fetch events count
+func cliDetailsInfo(strList eventType) CLI {
+	var cliDetails CLI
+	for i := 0; i < len(strList); i++ {
+		switch strList[i].EventType {
+		case "qbert: cluster creation success":
+			cliDetails.ClusterCreation.Success += 1
+		case "qbert: cluster deletion success":
+			cliDetails.ClusterCreation.Delete += 1
+		case "Prep-node : Successful":
+			cliDetails.Prepnode.Success += 1
+		case "CheckNode complete":
+			cliDetails.ChecknodeSuccess += 1
+		case "Prep-node : ERROR":
+			cliDetails.Prepnode.Failure += 1
+		}
+	}
+	return cliDetails
 }
 
 // To fetch the host details using bork apis.
