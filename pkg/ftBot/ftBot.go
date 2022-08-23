@@ -2,7 +2,6 @@ package ftBot
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -183,11 +182,12 @@ func handleAppMessageEvent(event *slackevents.MessageEvent, client *slack.Client
 		zap.S().Errorf("error while fetching nps analysis for user, error: %v", userID, err)
 	}
 	// Use this to prety print json
-	jsonResp, err := json.MarshalIndent(npsAnalysis, "", "  ")
+	/*jsonResp, err := json.MarshalIndent(npsAnalysis, "", "  ")
 	if err != nil {
 		fmt.Println(err)
 		zap.S().Errorf("Error while marshalling the response: %v", err)
-	}
+	}*/
+	out := api.GenNPSOutput(npsAnalysis)
 
 	// Add Some default context like user who mentioned the bot
 	attachment.Fields = []slack.AttachmentField{
@@ -197,7 +197,7 @@ func handleAppMessageEvent(event *slackevents.MessageEvent, client *slack.Client
 		},
 		{
 			Title: "NPS Analysis",
-			Value: string(jsonResp),
+			Value: string(out),
 		},
 	}
 

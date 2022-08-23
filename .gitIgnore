@@ -10,6 +10,7 @@ ft-analyser-bot*
 *.dll
 *.so
 *.dylib
+kubeconfig
 
 # OS generated files #
 ######################

@@ -57,17 +57,18 @@ func npsAnalysis(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	// Use this to prety print json
+	/*// Use this to prety print json
 	jsonResp, err := json.MarshalIndent(npsAnalysis, "", "  ")
 	if err != nil {
 		fmt.Println(err)
 		zap.S().Errorf("Error while marshalling the response: %v", err)
 		return
-	}
+	}*/
+	out := GenNPSOutput(npsAnalysis)
 
 	//TODO: If we format message in Analysis bot then send weeklyAnalysis struct as resp.
 	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write(jsonResp); err != nil {
+	if _, err := w.Write([]byte(out)); err != nil {
 		zap.S().Errorf("Error while responding over http. Error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

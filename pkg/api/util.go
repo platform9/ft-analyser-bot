@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"strings"
 
 	amplitudeapi "github.com/platform9/ft-analyser-bot/pkg/amplitude"
 )
@@ -23,5 +24,26 @@ func GenerateOutputString(weeklyAnalysis amplitudeapi.WeeklyAnalysis) string {
 	s += fmt.Sprintln("Cluster creation attempts")
 	s += fmt.Sprintln("	- New users:", weeklyAnalysis.Cluster_Creation_Attempts.New_Users)
 	s += fmt.Sprintln("	- Existing users:", weeklyAnalysis.Cluster_Creation_Attempts.Existing_Users)
+	return s
+}
+
+func GenNPSOutput(npsAnalysis amplitudeapi.NPSAnalysis) string {
+	var s string
+	s += fmt.Sprintln("* User is from :", npsAnalysis.UserCountry)
+	s += fmt.Sprintf("* Active from %s, last seen %s", npsAnalysis.FirstSeen, npsAnalysis.LastSeen)
+	s += fmt.Sprintf("\n* DU %s is hosted on the %s cluster", npsAnalysis.HostDetails.FQDN, strings.Trim(npsAnalysis.HostDetails.BorkCluster, ".platform9.io"))
+	s += fmt.Sprintf("\n* No of hosts attached %s, and active %s", npsAnalysis.HostDetails.HostCount, npsAnalysis.HostDetails.ActiveHosts)
+	s += fmt.Sprintf("\n* User performed checknode successfully %d times", npsAnalysis.CLIEvents.ChecknodeSuccess)
+	s += fmt.Sprintf("\n* User preformed prepnode successfully %d times, failed %d times", npsAnalysis.CLIEvents.Prepnode.Success, npsAnalysis.CLIEvents.Prepnode.Failure)
+	s += fmt.Sprintln("\n	- Prepnode failed due to errors: ")
+	for _, val := range npsAnalysis.CLIEvents.PrepnodeErrors {
+		s += fmt.Sprintln("	 - ", val)
+	}
+	s += fmt.Sprintf("\n* Created cluster successfully %d times, and deleted %d times\n", npsAnalysis.CLIEvents.ClusterCreation.Success, npsAnalysis.CLIEvents.ClusterCreation.Delete)
+	s += fmt.Sprintln("* Few of UI activites are: ")
+	for _, val := range npsAnalysis.UserActivities {
+		s += fmt.Sprintln("	 - ", val)
+	}
+	s += fmt.Sprintln(" - UI errors are: ", npsAnalysis.UIErrors)
 	return s
 }
