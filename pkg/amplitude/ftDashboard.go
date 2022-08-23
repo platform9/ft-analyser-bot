@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-//Amplitude charts id
+// Amplitude charts id
 var (
 	charts = map[string]string{
 		"Total User signups":       "erm22ws",
