@@ -71,9 +71,10 @@ func GetAllErrors(userID string) ([]UIErrors, error) {
 		}
 
 		if userID == eventDetails.User.ID {
-			uiErrors = append(uiErrors, UIErrors{UserID: eventDetails.User.ID,
+			uiErrors = append(uiErrors, UIErrors{
 				ErrorFaced: eventDetails.Context,
-				Time:       eventDetails.ReceivedAt})
+				//Time:       eventDetails.ReceivedAt}
+			})
 		}
 	}
 

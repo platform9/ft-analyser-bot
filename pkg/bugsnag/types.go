@@ -15,9 +15,8 @@ type AllEventsOfError []struct {
 }
 
 type UIErrors struct {
-	UserID     string
 	ErrorFaced string
-	Time       time.Time
+	//Time       time.Time
 }
 
 type EventDetails struct {

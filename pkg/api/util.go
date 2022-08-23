@@ -33,17 +33,30 @@ func GenNPSOutput(npsAnalysis amplitudeapi.NPSAnalysis) string {
 	s += fmt.Sprintf("* Active from %s, last seen %s", npsAnalysis.FirstSeen, npsAnalysis.LastSeen)
 	s += fmt.Sprintf("\n* DU %s is hosted on the %s cluster", npsAnalysis.HostDetails.FQDN, strings.Trim(npsAnalysis.HostDetails.BorkCluster, ".platform9.io"))
 	s += fmt.Sprintf("\n* No of hosts attached %s, and active %s", npsAnalysis.HostDetails.HostCount, npsAnalysis.HostDetails.ActiveHosts)
-	s += fmt.Sprintf("\n* User performed checknode successfully %d times", npsAnalysis.CLIEvents.ChecknodeSuccess)
-	s += fmt.Sprintf("\n* User preformed prepnode successfully %d times, failed %d times", npsAnalysis.CLIEvents.Prepnode.Success, npsAnalysis.CLIEvents.Prepnode.Failure)
-	s += fmt.Sprintln("\n	- Prepnode failed due to errors: ")
-	for _, val := range npsAnalysis.CLIEvents.PrepnodeErrors {
-		s += fmt.Sprintln("	 - ", val)
+	s += fmt.Sprintf("\n* User performed Check-Node successfully %d time/s", npsAnalysis.CLIEvents.ChecknodeSuccess)
+	s += fmt.Sprintf("\n* User preformed Prep-Node successfully %d time/s, failed %d time/s", npsAnalysis.CLIEvents.Prepnode.Success, npsAnalysis.CLIEvents.Prepnode.Failure)
+
+	if npsAnalysis.CLIEvents.Prepnode.Failure != 0 {
+		s += fmt.Sprintln("\n	- Prepnode failed due to errors: ")
+		for _, val := range npsAnalysis.CLIEvents.PrepnodeErrors {
+			s += fmt.Sprintln("	 - ", val)
+		}
 	}
+
 	s += fmt.Sprintf("\n* Created cluster successfully %d times, and deleted %d times\n", npsAnalysis.CLIEvents.ClusterCreation.Success, npsAnalysis.CLIEvents.ClusterCreation.Delete)
 	s += fmt.Sprintln("* Few of UI activites are: ")
 	for _, val := range npsAnalysis.UserActivities {
 		s += fmt.Sprintln("	 - ", val)
 	}
-	s += fmt.Sprintln(" - UI errors are: ", npsAnalysis.UIErrors)
+
+	s += fmt.Sprintln("* UI errors are: ")
+	if len(npsAnalysis.UIErrors) == 0 {
+		s += fmt.Sprintf("nil")
+	} else {
+		for _, val := range npsAnalysis.UIErrors {
+			s += fmt.Sprintln("	 - ", val)
+		}
+	}
+
 	return s
 }
