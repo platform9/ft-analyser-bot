@@ -28,17 +28,17 @@ func weeklyFTAnalysis(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Use this to prety print json
-	/*jsonResp, err := json.MarshalIndent(weeklyAnalysis, "", "  ")
+	jsonResp, err := json.MarshalIndent(weeklyAnalysis, "", "  ")
 	if err != nil {
 		fmt.Println(err)
 		zap.S().Errorf("Error while marshalling the response: %v", err)
 		return
 	}
-	*/
-	out := GenerateOutputString(weeklyAnalysis)
+
+	//out := GenerateOutputString(weeklyAnalysis)
 	//TODO: If we format message in Analysis bot then send weeklyAnalysis struct as resp.
 	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write([]byte(out)); err != nil {
+	if _, err := w.Write(jsonResp); err != nil {
 		zap.S().Errorf("Error while responding over http. Error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
