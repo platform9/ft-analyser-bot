@@ -25,7 +25,7 @@ func run(*cobra.Command, []string) {
 	zap.S().Info("Starting FT analyser bot service...")
 	zap.S().Infof("Version of FT analyser bot service: %s", version)
 	router := api.New()
-	ftBot.FtBotRun()
+
 	srv := &http.Server{
 		Handler: router,
 		Addr:    ":2112",
@@ -35,6 +35,10 @@ func run(*cobra.Command, []string) {
 		if err := srv.ListenAndServe(); err != nil {
 			zap.S().Fatalf(err.Error())
 		}
+	}()
+
+	go func() {
+		ftBot.FtBotRun()
 	}()
 
 	stop := make(chan os.Signal)

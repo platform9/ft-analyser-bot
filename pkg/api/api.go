@@ -35,6 +35,7 @@ func weeklyFTAnalysis(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//out := GenerateOutputString(weeklyAnalysis)
 	//TODO: If we format message in Analysis bot then send weeklyAnalysis struct as resp.
 	w.WriteHeader(http.StatusOK)
 	if _, err := w.Write(jsonResp); err != nil {
@@ -42,24 +43,6 @@ func weeklyFTAnalysis(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	// TODO: Response to be sent not print statements.
-	/*fmt.Sprintln("Total User signups :", weeklyAnalysis.Total_User_Signups)
-	fmt.Sprintln("User who verified emails :", weeklyAnalysis.User_Who_Verified_Emails)
-	fmt.Sprintln("Prep-node details")
-	fmt.Sprintln("	Prep-node attempts")
-	fmt.Sprintln("		New users:", weeklyAnalysis.PrepNode_Details.PrepNode_Attempts.New_Users)
-	fmt.Sprintln("		Existing users:", weeklyAnalysis.PrepNode_Details.PrepNode_Attempts.Existing_Users)
-	fmt.Sprintln("	Prep-node successes")
-	fmt.Sprintln("		New users:", weeklyAnalysis.PrepNode_Details.PrepNode_Success.New_Users)
-	fmt.Sprintln("		Existing users:", weeklyAnalysis.PrepNode_Details.PrepNode_Success.New_Users)
-	fmt.Sprintln("	Prep-node errors")
-	fmt.Sprintln("		New users:", weeklyAnalysis.PrepNode_Details.PrepNode_Errors.New_Users)
-	fmt.Sprintln("		Existing users:", weeklyAnalysis.PrepNode_Details.PrepNode_Errors.Existing_Users)
-	fmt.Sprintln("Cluster creation attempts")
-	fmt.Sprintln("	New users:", weeklyAnalysis.Cluster_Creation_Attempts.New_Users)
-	fmt.Sprintln("	Existing users:", weeklyAnalysis.Cluster_Creation_Attempts.Existing_Users)
-	*/
 }
 
 func npsAnalysis(w http.ResponseWriter, r *http.Request) {

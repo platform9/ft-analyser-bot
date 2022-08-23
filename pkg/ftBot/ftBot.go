@@ -11,6 +11,7 @@ import (
 	"time"
 
 	amplitudeapi "github.com/platform9/ft-analyser-bot/pkg/amplitude"
+	"github.com/platform9/ft-analyser-bot/pkg/api"
 	"github.com/platform9/ft-analyser-bot/pkg/config"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
@@ -121,12 +122,7 @@ func handleAppMentionEvent(event *slackevents.AppMentionEvent, client *slack.Cli
 	if err != nil {
 		zap.S().Errorf("error while fetching weekly FT analysis, error: %v", err)
 	}
-	// Use this to prety print json
-	jsonResp, err := json.MarshalIndent(weeklyAnalysis, "", "  ")
-	if err != nil {
-		fmt.Println(err)
-		zap.S().Errorf("Error while marshalling the response: %v", err)
-	}
+	out := api.GenerateOutputString(weeklyAnalysis)
 
 	// Add Some default context like user who mentioned the bot
 	attachment.Fields = []slack.AttachmentField{
@@ -136,12 +132,12 @@ func handleAppMentionEvent(event *slackevents.AppMentionEvent, client *slack.Cli
 		},
 		{
 			Title: "Weekly Analysis",
-			Value: string(jsonResp),
+			Value: out,
 		},
 	}
 	if strings.Contains(text, "weekly analysis") {
 		attachment.Pretext = "FT Weekly Analysis"
-		attachment.Color = "#00FF00"
+		attachment.Color = "#FFA500"
 	}
 	// Send the message to the channel
 	// The Channel is available in the event message
