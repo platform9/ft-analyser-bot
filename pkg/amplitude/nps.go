@@ -34,7 +34,10 @@ type duDetails struct {
 
 type amplitudeData struct {
 	Events []struct {
-		EventType string `json:"event_type"`
+		EventType       string `json:"event_type"`
+		EventProperties struct {
+			ErrorMsg string `json:"errorMsg,omitempty"`
+		} `json:"event_properties"`
 	} `json:"events"`
 	UserData struct {
 		FirstSeen  int64 `json:"firstSeen"`
@@ -64,6 +67,7 @@ type CLI struct {
 		Success int
 		Failure int
 	}
+	PrepnodeErrors   []string
 	ChecknodeSuccess int
 	ClusterCreation  struct {
 		Success int
@@ -78,8 +82,10 @@ type DUDetails struct {
 	ActiveHosts string
 }
 
-/* NpsScoreAnalysis generates a detailed report with
-   user info, events and error analysis like UI errors, pf9cli error.
+/*
+NpsScoreAnalysis generates a detailed report with
+
+	user info, events and error analysis like UI errors, pf9cli error.
 */
 func NpsScoreAnalysis(userID string) (NPSAnalysis, error) {
 	// Fetch the amplitude ID
@@ -147,7 +153,7 @@ func printUserData(AmplitudeUserID int64) (NPSAnalysis, error) {
 	npsAnalysis.UserCountry = userData.UserData.Country
 	npsAnalysis.FirstSeen = userData.UserData.FirstUsed
 	npsAnalysis.LastSeen = userData.UserData.LastUsed
-	cliDetails := cliDetailsInfo(userData.Events)
+	cliDetails := cliDetailsInfo(userData)
 	npsAnalysis.CLIEvents = cliDetails
 
 	npsAnalysis.UserActivities = removeDuplicates(userData.Events)[:9]
@@ -162,10 +168,10 @@ func printUserData(AmplitudeUserID int64) (NPSAnalysis, error) {
 }
 
 // To fetch events count
-func cliDetailsInfo(strList eventType) CLI {
+func cliDetailsInfo(ampData amplitudeData) CLI {
 	var cliDetails CLI
-	for i := 0; i < len(strList); i++ {
-		switch strList[i].EventType {
+	for i := 0; i < len(ampData.Events); i++ {
+		switch ampData.Events[i].EventType {
 		case "qbert: cluster creation success":
 			cliDetails.ClusterCreation.Success += 1
 		case "qbert: cluster deletion success":
@@ -175,7 +181,10 @@ func cliDetailsInfo(strList eventType) CLI {
 		case "CheckNode complete":
 			cliDetails.ChecknodeSuccess += 1
 		case "Prep-node : ERROR":
-			cliDetails.Prepnode.Failure += 1
+			{
+				cliDetails.Prepnode.Failure += 1
+				cliDetails.PrepnodeErrors = append(cliDetails.PrepnodeErrors, ampData.Events[i].EventProperties.ErrorMsg)
+			}
 		}
 	}
 	return cliDetails
@@ -215,7 +224,10 @@ func contains(s []string, e string) bool {
 }
 
 type eventType []struct {
-	EventType string "json:\"event_type\""
+	EventType       string "json:\"event_type\""
+	EventProperties struct {
+		ErrorMsg string `json:"errorMsg,omitempty"`
+	} `json:"event_properties"`
 }
 
 // To remove duplicates from amplitude events list
