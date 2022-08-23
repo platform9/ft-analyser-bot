@@ -64,6 +64,7 @@ func npsAnalysis(w http.ResponseWriter, r *http.Request) {
 		zap.S().Errorf("Error while marshalling the response: %v", err)
 		return
 	}
+	//out := GenNPSOutput(npsAnalysis)
 
 	//TODO: If we format message in Analysis bot then send weeklyAnalysis struct as resp.
 	w.WriteHeader(http.StatusOK)
