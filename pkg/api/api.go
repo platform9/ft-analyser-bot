@@ -51,7 +51,7 @@ func npsAnalysis(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userid := vars["userid"]
 	zap.S().Debugf("UserID: %s", userid)
-	npsAnalysis, err := amplitudeapi.NpsScoreAnalysis(userid)
+	npsAnalysis, err := amplitudeapi.NpsScoreAnalysis(userid, "")
 	if err != nil {
 		zap.S().Errorf("error while fetching nps analysis for user, error: %v", userid, err)
 		w.WriteHeader(http.StatusInternalServerError)

@@ -177,7 +177,7 @@ func handleAppMessageEvent(event *slackevents.MessageEvent, client *slack.Client
 	attachment := slack.Attachment{}
 
 	dt := time.Now()
-	npsAnalysis, err := amplitudeapi.NpsScoreAnalysis(userID)
+	npsAnalysis, err := amplitudeapi.NpsScoreAnalysis(userID, "")
 	if err != nil {
 		zap.S().Errorf("error while fetching nps analysis for user, error: %v", userID, err)
 	}

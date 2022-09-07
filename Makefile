@@ -35,7 +35,7 @@ clean:
 	rm -rf $(BIN_DIR)
 
 build:
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a -o $(BIN_DIR)/$(BIN) $(CMD_DIR)/main.go
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a -o $(BIN_DIR)/"analyze-nps" $(CMD_DIR)/main.go
 
 test:
 	go test -v ./...

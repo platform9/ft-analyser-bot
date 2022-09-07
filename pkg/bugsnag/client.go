@@ -14,11 +14,15 @@ type api struct {
 
 // getBugsnagInfoAPI fetches info using bork apis.
 func (api *api) getBugsnagInfoAPI() ([]byte, error) {
+	var token = "token <TOKEN>"
 	req, err := http.NewRequest("GET", api.baseURL, nil)
 	if err != nil {
+		fmt.Println("Error:", err)
 		return nil, fmt.Errorf("Http request failed with error: %v", err)
 	}
 
+	req.Header.Add("X-Version", "2")
+	req.Header.Add("Authorization", token)
 	resp, err := api.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("Failed with error: %v", err)

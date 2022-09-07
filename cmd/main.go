@@ -1,16 +1,12 @@
 package main
 
 import (
-	"context"
-	"net/http"
+	"fmt"
 	"os"
-	"os/signal"
 	"path/filepath"
-	"time"
 
+	"github.com/platform9/ft-analyser-bot/pkg/amplitude"
 	"github.com/platform9/ft-analyser-bot/pkg/api"
-	"github.com/platform9/ft-analyser-bot/pkg/ftBot"
-
 	"github.com/platform9/ft-analyser-bot/pkg/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -19,12 +15,22 @@ import (
 
 var (
 	version = "ft-analyser-bot version: v1.0"
+	id      string
+	email   string
 )
 
 func run(*cobra.Command, []string) {
 	zap.S().Info("Starting FT analyser bot service...")
 	zap.S().Infof("Version of FT analyser bot service: %s", version)
-	router := api.New()
+	fmt.Println("Analyzing user please wait...")
+	npsAnalysis, err := amplitude.NpsScoreAnalysis(id, email)
+	if err != nil {
+		fmt.Println("Error", err)
+	} else {
+		out := api.GenNPSOutput(npsAnalysis)
+		fmt.Println(out)
+	}
+	/*router := api.New()
 
 	srv := &http.Server{
 		Handler: router,
@@ -51,12 +57,25 @@ func run(*cobra.Command, []string) {
 		if err := srv.Shutdown(ctx); err != nil {
 			zap.S().Fatalf(err.Error())
 		}
-	}
+	}*/
 }
 
 func main() {
 	cmd := buildCmds()
 	cmd.Execute()
+	/*fmt.Println("NPS Analysis")
+	fmt.Print("Enter userID: ")
+	fmt.Scanf("%s", &id)
+	fmt.Print("Enter emailID: ")
+	fmt.Scanf("%s", &email)
+	npsAnalysis, err := amplitude.NpsScoreAnalysis(id, email)
+	if err != nil {
+		fmt.Println("Error", err)
+	} else {
+		out := api.GenNPSOutput(npsAnalysis)
+		fmt.Println(out)
+	}*/
+
 }
 
 // Config file to read secrets like Amplitude, Hubspot, Bugsnag credentials.
@@ -69,12 +88,14 @@ var (
 
 func buildCmds() *cobra.Command {
 	rootCmd := &cobra.Command{
-		Use:   "ft-analyser",
+		Use:   "analyze-nps",
 		Short: "ft-analyser-bot is a service to generate FT weekly and NPS analysis",
 		Long:  "ft-analyser-bot is a service to generate FT weekly and NPS analysis",
 		Run:   run,
 	}
 
+	rootCmd.Flags().StringVar(&id, "id", "", "userID of user")
+	rootCmd.Flags().StringVar(&email, "email", "", "emailID of user")
 	return rootCmd
 }
 

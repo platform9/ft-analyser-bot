@@ -2,8 +2,24 @@ package bugsnag
 
 import "time"
 
+type UserFaced []struct {
+	//EventFieldValue string    `json:"event_field_value"`
+	//Events          int       `json:"events"`
+	//Proportion      float64   `json:"proportion"`
+	//FirstSeen       time.Time `json:"first_seen"`
+	//LastSeen        time.Time `json:"last_seen"`
+	Fields struct {
+		UserEmail string `json:"user.email,omitempty"`
+		UserName  string `json:"user.name,omitempty"`
+	} `json:"fields,omitempty"`
+	//Aggregates interface{} `json:"aggregates"`
+}
+
 type AllErrors []struct {
-	URL string `json:"url,omitempty"`
+	ID      string `json:"id,omitempty"`
+	URL     string `json:"url,omitempty"`
+	Message string `json:"message,omitempty"`
+	Context string `json:"context,omitempty"`
 }
 
 type ErrorDetails struct {
