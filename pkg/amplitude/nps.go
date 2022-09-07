@@ -87,7 +87,7 @@ NpsScoreAnalysis generates a detailed report with
 
 	user info, events and error analysis like UI errors, pf9cli error.
 */
-func NpsScoreAnalysis(userID string) (NPSAnalysis, error) {
+func NpsScoreAnalysis(userID string, email string) (NPSAnalysis, error) {
 	// Fetch the amplitude ID
 	id, err := getAmplitudeID(userID)
 	if err != nil {
@@ -102,7 +102,7 @@ func NpsScoreAnalysis(userID string) (NPSAnalysis, error) {
 		return NPSAnalysis{}, err
 	}
 
-	npsAnalysis.UIErrors, err = bugsnag.GetAllErrors(userID)
+	npsAnalysis.UIErrors, err = bugsnag.GetAllErrors(userID, email)
 	if err != nil {
 		zap.S().Errorf("failed to fetch UI Errors, error: %v", err.Error())
 		//return NPSAnalysis{}, err
@@ -156,7 +156,7 @@ func printUserData(AmplitudeUserID int64) (NPSAnalysis, error) {
 	cliDetails := cliDetailsInfo(userData)
 	npsAnalysis.CLIEvents = cliDetails
 
-	npsAnalysis.UserActivities = removeDuplicates(userData.Events)[:9]
+	npsAnalysis.UserActivities = removeDuplicates(userData.Events)[:8]
 
 	//Fetch the DU host details for given fqdn
 	hostDetails, err := hostDetails(userData.UserData.Properties.DuFqdn)
@@ -204,9 +204,10 @@ func hostDetails(fqdn string) (DUDetails, error) {
 	duData := duDetails{}
 	//zap.S().Debugf("\nduData: %s\n", string(regionInfo))
 	err = json.Unmarshal(regionInfo, &duData)
-	if err != nil {
+	//TO do commenting
+	/*if err != nil {
 		return DUDetails{}, fmt.Errorf("unable to unmarshal bork info, error: %v", err.Error())
-	}
+	}*/
 
 	return DUDetails{FQDN: duData.Details.Fqdn,
 		BorkCluster: duData.Details.Cluster,

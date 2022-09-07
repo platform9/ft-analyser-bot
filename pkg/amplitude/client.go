@@ -22,8 +22,8 @@ func (api *api) getInfoAPI() ([]byte, error) {
 	}
 
 	req.Header.Add("Accept", "application/json")
-	amplitudeCreds := config.AmplitudeCreds()
-	req.SetBasicAuth(amplitudeCreds.ApiKey, amplitudeCreds.SecretKey)
+	//amplitudeCreds := config.AmplitudeCreds()
+	req.SetBasicAuth("userName", "PassWord")
 
 	resp, err := api.client.Do(req)
 	if err != nil {
